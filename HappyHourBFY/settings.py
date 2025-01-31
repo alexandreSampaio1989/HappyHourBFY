@@ -10,22 +10,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from configobj import ConfigObj
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# INÍCIO DO CARREGAMENTO DA CONFIGURAÇÃO DE AMBIENTE
+ENV_CONF_FILE = f'{BASE_DIR}/HappyHourBFY/config/env.conf'
+ENV_CONFIG = ConfigObj(ENV_CONF_FILE)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b67wv*qd4!%za)#tte@8b(xrj@6(t9!^b$@_f#e2mz=nfi^wp1'
+SECRET_KEY = ENV_CONFIG['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ENV_CONFIG['DEBUG']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,10 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_bootstrap5',
+    'stdimage',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,7 +62,7 @@ ROOT_URLCONF = 'HappyHourBFY.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,10 +81,17 @@ WSGI_APPLICATION = 'HappyHourBFY.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DB_CONF_FILE = f'{BASE_DIR}/evox/config/mysql.conf'
+DB_CONFIG = ConfigObj(DB_CONF_FILE)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE':   DB_CONFIG['DB_ENGINE'],
+        'NAME':     DB_CONFIG['DB_NAME'],
+        'USER':     DB_CONFIG['DB_USER'],
+        'PASSWORD': DB_CONFIG['DB_PASSWORD'],
+        'HOST':     DB_CONFIG['DB_HOST'],
+        'PORT':     DB_CONFIG['DB_PORT'],
     }
 }
 
@@ -103,21 +118,22 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = ENV_CONFIG['LANGUAGE_CODE']
+TIME_ZONE = ENV_CONFIG['TIME_ZONE']
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = f'/{ENV_CONFIG['MEDIA_DIR']}/'
+MEDIA_ROOT = os.path.join(BASE_DIR, ENV_CONFIG['MEDIA_DIR'])
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGOUT_REDIRECT_URL = 'index'
