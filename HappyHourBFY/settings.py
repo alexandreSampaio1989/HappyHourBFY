@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap5',
     'stdimage',
+    'core'
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'HappyHourBFY.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DB_CONF_FILE = f'{BASE_DIR}/evox/config/mysql.conf'
+DB_CONF_FILE = f'{BASE_DIR}/HappyHourBFY/config/mysql.conf'
 DB_CONFIG = ConfigObj(DB_CONF_FILE)
 
 DATABASES = {
