@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 
 HappyHourBFY/config/*.conf
+template/
